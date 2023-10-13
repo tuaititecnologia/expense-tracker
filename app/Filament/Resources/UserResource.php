@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -35,10 +36,15 @@ class UserResource extends Resource
                     ->confirmed(),
                 TextInput::make('email_confirmation')
                     ->email()
-                    ->required(),
+                    ->requiredWith('email'),
                 TextInput::make('password')
                     ->string()
-                    ->required()
+                    ->required(fn (string $operation) => $operation === 'create')
+                    ->confirmed()
+                    ->password(),
+                TextInput::make('password_confirmation')
+                    ->string()
+                    ->requiredWith('password')
                     ->password()
             ]);
     }
@@ -56,6 +62,8 @@ class UserResource extends Resource
             ->actions([
                 Impersonate::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -67,7 +75,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RolesRelationManager::class,
         ];
     }
 
