@@ -34,7 +34,8 @@ class ExpenseResource extends Resource
                     ->relationship(
                         name: 'user',
                         titleAttribute: 'name',
-                    ),
+                    )
+                    ->hidden(fn () => !auth()->user()->hasRole('super_admin')),
                 DateTimePicker::make('date_time')
                     ->label("Date and time")
                     ->default(now())
@@ -53,6 +54,7 @@ class ExpenseResource extends Resource
                     ->createOptionUsing(function ($data) {
                         return Category::create($data);
                     }),
+                TextInput::make('description'),
                 TextInput::make('ammount')
                     ->label(__("Ammount"))
                     ->numeric()
@@ -66,7 +68,8 @@ class ExpenseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('date_time'),
-                TextColumn::make('user.name'),
+                TextColumn::make('user.name')
+                    ->hidden(fn () => !auth()->user()->hasRole('super_admin')),
                 TextColumn::make('category.name'),
                 TextColumn::make('ammount')
                     ->money()
