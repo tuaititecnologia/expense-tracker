@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,10 @@ class Expense extends Model
     use HasFactory;
 
     public $guarded = [];
+
+    protected $casts = [
+        'ammount' => MoneyCast::class,
+    ];
 
     public function category(): BelongsTo {
         return $this->belongsTo(Category::class);
