@@ -12,7 +12,18 @@ class Category extends Model
 
     protected $guarded = [];
 
-    public function expenses(): HasMany {
+    public function expenses(): HasMany
+    {
         return $this->hasMany(Expense::class);
+    }
+
+    public function scopeOrderByMostUsed($query)
+    {
+        return $query
+            ->select('categories.id', 'categories.name')
+            ->selectRaw('COUNT(expenses.id) as expense_count')
+            ->leftJoin('expenses', 'categories.id', '=', 'expenses.category_id')
+            ->groupBy('categories.id', 'categories.name')
+            ->orderByDesc('expense_count');
     }
 }

@@ -30,17 +30,25 @@ class ExpenseResource extends Resource
         return $form
             ->schema([
                 DateTimePicker::make('date_time')
+                    ->label("Date and time")
                     ->default(now())
                     ->seconds(false)
                     ->native(false),
                 Select::make('category_id')
+                    ->label(__("Category"))
                     ->required()
-                    ->relationship(name: 'category', titleAttribute: 'name')
+                    ->options(Category::orderByMostUsed()->pluck('name', 'id'))
+                    ->searchable()
                     ->createOptionForm([
                         TextInput::make('name')
+                            ->string()
                             ->required(),
-                    ]),
+                    ])
+                    ->createOptionUsing(function ($data) {
+                        return Category::create($data);
+                    }),
                 TextInput::make('ammount')
+                    ->label(__("Ammount"))
                     ->numeric()
                     ->inputMode('decimal')
 
@@ -52,6 +60,7 @@ class ExpenseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('date_time'),
+                TextColumn::make('user.name'),
                 TextColumn::make('category.name'),
                 TextColumn::make('ammount')
                     ->money()
