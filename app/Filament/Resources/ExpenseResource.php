@@ -6,6 +6,7 @@ use App\Filament\Resources\ExpenseResource\Pages;
 use App\Filament\Resources\ExpenseResource\RelationManagers;
 use App\Models\Category;
 use App\Models\Expense;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
@@ -29,6 +30,11 @@ class ExpenseResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('user_id')
+                    ->relationship(
+                        name: 'user',
+                        titleAttribute: 'name',
+                    ),
                 DateTimePicker::make('date_time')
                     ->label("Date and time")
                     ->default(now())
